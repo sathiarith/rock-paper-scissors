@@ -6,6 +6,9 @@ from arcade.gui import UIAnchorLayout, UITextureButton, UIBoxLayout, UILabel, UI
 # Preload files
 blue_rect_button_default = arcade.load_texture("Graphics/Button/Rect-Medium/Default.png")
 blue_rect_button_hover = arcade.load_texture("Graphics/Button/Rect-Medium/Hover.png")
+title_img = arcade.load_texture("Graphics/Objects/Title.jpg")
+rules_img = arcade.load_texture("Graphics/Objects/rps_rules_modified.png")
+enemy_img = arcade.load_texture("Graphics/Objects/robot_profile.png")
 
 button_sound = arcade.load_sound("Sounds/button-bling.wav")
 
@@ -26,20 +29,30 @@ class Start(arcade.View):
         self.player_id = ""
 
         music = arcade.load_sound("Sounds/tam-xa-mai-start-background.mp3")
-        play_music = arcade.play_sound(music)
+        play_music = arcade.play_sound(music, loop=True)
 
         # Create an anchor layout, which can be used to position widgets on screen
-        title_anchor = self.ui.add(UIAnchorLayout(x=0,y=600//4))
+        title_anchor = self.ui.add(UIAnchorLayout(x=0,y=150))
         input_anchor = self.ui.add(UIAnchorLayout())
-        start_game_anchor = self.ui.add(UIAnchorLayout(x=0,y=-(600//6)))
+        start_game_anchor = self.ui.add(UIAnchorLayout(x=0,y=-(100)))
+        enemy_anchor = self.ui.add(UIAnchorLayout(x=245,y=-(265)))
 
         # Title
         row_title = title_anchor.add(UIBoxLayout(align="center",vertical=False,size_hint=(0,0)))
         row_title.add(UILabel(text="Rock Paper Scissors", font_name="Arial", font_size=32, bold=True))
+        self.title_sprite = arcade.Sprite(title_img, center_x=400.0, center_y=470.0, scale=0.1)
+        self.title_sprite.width = 800
+
+        # Rules Overlay
+        self.rules_sprite = arcade.Sprite(rules_img, center_x=150.0, center_y=130.0, scale=0.4)
+
+        # Opponent Introduction
+        self.enemy_sprite = arcade.Sprite(enemy_img, center_x=650.0, center_y=150.0, scale=0.75)
+        enemy_anchor.add(UILabel(text="Opponent", font_name=("Arial",), font_size=24, bold=True))
 
         # Get player's name
         row_username = input_anchor.add(UIBoxLayout(align = "left", vertical=True, size_hint=(0, 0)))
-        row_username.add(UILabel(text="Player Name: ", font_name=("Arial",), font_size= 24))
+        row_username.add(UILabel(text="Player Name: ", font_name=("Arial",), font_size= 24, bold=True))
         p_input = arcade.gui.UIInputText(
                 width=400,
                 height=40,
@@ -80,8 +93,11 @@ class Start(arcade.View):
 
     def on_draw(self):
         self.clear()
-        arcade.set_background_color(arcade.color.PASTEL_BLUE)
+        arcade.set_background_color(arcade.color.DARK_PASTEL_BLUE)
         self.ui.draw()
+        arcade.draw_sprite(self.title_sprite)
+        arcade.draw_sprite(self.rules_sprite)
+        arcade.draw_sprite(self.enemy_sprite)
 
 
 
