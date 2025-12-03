@@ -26,7 +26,7 @@ class Start(arcade.View):
         self.player_id = ""
 
         music = arcade.load_sound("Sounds/tam-xa-mai-start-background.mp3")
-        arcade.play_sound(music)
+        play_music = arcade.play_sound(music)
 
         # Create an anchor layout, which can be used to position widgets on screen
         title_anchor = self.ui.add(UIAnchorLayout(x=0,y=600//4))
@@ -40,8 +40,7 @@ class Start(arcade.View):
         # Get player's name
         row_username = input_anchor.add(UIBoxLayout(align = "left", vertical=True, size_hint=(0, 0)))
         row_username.add(UILabel(text="Player Name: ", font_name=("Arial",), font_size= 24))
-        row_username.add(
-            arcade.gui.UIInputText(
+        p_input = arcade.gui.UIInputText(
                 width=400,
                 height=40,
                 font_name=('Arial',),
@@ -49,7 +48,7 @@ class Start(arcade.View):
                 border_color=arcade.uicolor.WHITE,
                 border_width=2,
             )
-        )
+        row_username.add(p_input)
 
         start_game_anchor.add(UIBoxLayout(align="center",vertical=False,size_hint=(0, 0)))
         start_button = UITextureButton(
@@ -61,13 +60,16 @@ class Start(arcade.View):
             )
         start_game_anchor.add(start_button)
 
-        @row_username.event("on_event")
-        def on_event(event):
-            pass
+        @p_input.event("on_change")
+        def _(event):
+            self.player_id = p_input.text
+            print(self.player_id)
 
         @start_button.event("on_click")
-        def start_game(event):
+        def _(event):
             arcade.play_sound(button_sound)
+            self.window.show_view(Play())
+            play_music.pause()
 
 
     def on_show_view(self) -> None:
