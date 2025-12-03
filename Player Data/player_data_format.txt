@@ -1,0 +1,11 @@
+json
+
+{
+    "name":
+    "wins":
+    "losses":
+    "total_games":
+    "rock_picks":
+    "paper_picks":
+    "scissors_picks":
+}
