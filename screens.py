@@ -1,7 +1,7 @@
 import arcade
 import arcade.gui
 from computer import Computer
-from arcade.gui import UIAnchorLayout, UITextureButton, UIBoxLayout, UILabel, UIOnClickEvent, UIOnChangeEvent
+from arcade.gui import UIAnchorLayout, UITextureButton, UIBoxLayout, UILabel
 
 # Preload files
 # Graphics
@@ -9,9 +9,7 @@ blue_rect_button_default = arcade.load_texture("Graphics/Button/Rect-Medium/Defa
 blue_rect_button_hover = arcade.load_texture("Graphics/Button/Rect-Medium/Hover.png")
 blue_sq_button_default = arcade.load_texture("Graphics/Button/Square-Medium/Default.png")
 blue_sq_button_hover = arcade.load_texture("Graphics/Button/Square-Medium/Hover.png")
-rock_img = arcade.load_texture("Graphics/Objects/rock.png")
-paper_img = arcade.load_texture("Graphics/Objects/paper.png")
-scissors_img = arcade.load_texture("Graphics/Objects/scissors.png")
+
 title_img = arcade.load_texture("Graphics/Objects/Title.jpg")
 rules_img = arcade.load_texture("Graphics/Objects/rps_rules_modified.png")
 enemy_img = arcade.load_texture("Graphics/Objects/robot_profile.png")
@@ -39,8 +37,8 @@ class Start(arcade.View):
         play_music = arcade.play_sound(music, loop=True)
 
         # Create an anchor layout, which can be used to position widgets on screen
-        # Note: arcade widgets use the center of screen, therefore uses x and y offsets and not coords
-        # Arcade window sets coord x=0, y=0 at the bottom left of window
+        # Note: arcade widgets use the center of screen, therefore uses x and y offsets and not cords
+        # Arcade window sets cord x=0, y=0 at the bottom left of window
         input_anchor = self.ui.add(UIAnchorLayout(x=0,y=0))
         start_game_anchor = self.ui.add(UIAnchorLayout(x=0,y=-100))
         enemy_anchor = self.ui.add(UIAnchorLayout(x=245,y=-265))
@@ -128,6 +126,7 @@ class Play(arcade.View):
         # Anchors layout
         score_anchor = self.ui.add(UIAnchorLayout(x=-250, y=250))
         enemy_anchor = self.ui.add(UIAnchorLayout(x=280, y=70))
+        select_buttons_anchor = self.ui.add(UIAnchorLayout(x=40, y=-180))
 
         # Enemy sprite placement
         self.enemy_sprite = arcade.Sprite(enemy_img, center_x=680.0, center_y=490.0, scale=0.75)
@@ -152,6 +151,77 @@ class Play(arcade.View):
 
         score_box.add(self.p_wins)
         score_box.add(self.comp_wins)
+
+        # Create buttons for rock, paper, and scissors
+        # Buttons have an image each
+
+        rock_img = arcade.gui.UIImage(
+            texture = arcade.load_texture("Graphics/Objects/rock.png"),
+            size_hint=(.4, .7),
+        )
+        self.rock_button = UITextureButton(
+            texture = blue_sq_button_default,
+            texture_pressed = blue_sq_button_default,
+            texture_hovered = blue_sq_button_hover,
+            size_hint=(.3, .2),
+        )
+        self.rock_button.add(rock_img)
+
+        paper_img = arcade.gui.UIImage(
+            texture = arcade.load_texture("Graphics/Objects/paper.png"),
+            size_hint=(.4, .7),
+        )
+        self.paper_button = UITextureButton(
+            texture = blue_sq_button_default,
+            texture_pressed = blue_sq_button_default,
+            texture_hovered = blue_sq_button_hover,
+            size_hint = (.3, .2),
+        )
+        self.paper_button.add(paper_img)
+
+        scissors_img = arcade.gui.UIImage(
+            texture = arcade.load_texture("Graphics/Objects/scissors.png"),
+            size_hint=(.4, .7),
+        )
+        self.scissors_button = UITextureButton(
+            texture = blue_sq_button_default,
+            texture_pressed = blue_sq_button_default,
+            texture_hovered = blue_sq_button_hover,
+            size_hint = (.3, .2),
+        )
+        self.scissors_button.add(scissors_img)
+
+        # UI Box layout
+        buttons_layout = UIBoxLayout(
+            align="center",
+            vertical=False,
+            size_hint=(1, 1),
+            space_between=10,
+        )
+
+
+        # Anchor organizes all buttons
+        buttons_layout.add(self.rock_button)
+        buttons_layout.add(self.paper_button)
+        buttons_layout.add(self.scissors_button)
+
+        select_buttons_anchor.add(buttons_layout)
+
+        @self.rock_button.event("on_click")
+        def _(event):
+            arcade.play_sound(button_sound)
+            #TODO compare with comp choice to determine winner
+
+        @self.paper_button.event("on_click")
+        def _(event):
+            arcade.play_sound(button_sound)
+            # TODO compare with comp choice to determine winner
+
+        @self.scissors_button.event("on_click")
+        def _(event):
+            arcade.play_sound(button_sound)
+            # TODO compare with comp choice to determine winner
+
 
     def on_show_view(self) -> None:
         self.ui.enable()
