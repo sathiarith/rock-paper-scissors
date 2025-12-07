@@ -214,6 +214,7 @@ class Play(arcade.View):
         @self.rock_button.event("on_click")
         def _(event):
             arcade.play_sound(button_sound)
+            self.hand_choices["player"] = "rock"
             if self.hand_choices["computer"] in ["rock", "paper", "scissors"]:
                 self.player_response("rock", reveal_choice=True)
             else:
@@ -222,6 +223,7 @@ class Play(arcade.View):
         @self.paper_button.event("on_click")
         def _(event):
             arcade.play_sound(button_sound)
+            self.hand_choices["player"] = "paper"
             if self.hand_choices["computer"] in ["rock", "paper", "scissors"]:
                 self.player_response("paper", reveal_choice=True)
             else:
@@ -230,6 +232,7 @@ class Play(arcade.View):
         @self.scissors_button.event("on_click")
         def _(event):
             arcade.play_sound(button_sound)
+            self.hand_choices["player"] = "scissors"
             if self.hand_choices["computer"] in ["rock", "paper", "scissors"]:
                 self.player_response("scissors", reveal_choice=True)
             else:
@@ -253,9 +256,13 @@ class Play(arcade.View):
         # Player and Computer win tally
         # Computer decides based on algorithm
         self.hand_choices["computer"] = self.computer.play()
+        self.hand_choices["player"] = self.computer.play()
+        player_ready = self.hand_choices["player"] != "none"
+        self.computer_response(self.hand_choices["computer"], player_ready)
         winner = "none"
         if self.hand_choices["player"] != "none" and self.hand_choices["computer"] != "none":
             winner = self.decide_winner(self.hand_choices["player"], self.hand_choices["computer"])
+        print(self.hand_choices)
         if winner != "none":
             print(winner)
             # reset responses
