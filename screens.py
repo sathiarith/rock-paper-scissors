@@ -119,6 +119,7 @@ class Play(arcade.View):
     """
     def __init__(self, player_id: str) -> None:
         super().__init__()
+        self.p_id = player_id
         self.ui = arcade.gui.UIManager()
         self.computer = Computer()
         self.game_mode = 0 # 0 for random, 1 for probabilistic
@@ -141,13 +142,13 @@ class Play(arcade.View):
         score_box = score_anchor.add(UIBoxLayout(align="left", vertical=True, size_hint=(0, 0)))
 
         self.p_wins = UILabel(
-            text=f"{player_id} Wins: {self.player_wins}",
+            text=f"{self.p_id} Wins: {self.player_wins}",
             font_name=("Arial",),
             font_size=24,
             bold=True,
         )
 
-        self.comp_wins = UILabel(
+        self.c_wins = UILabel(
             text=f"Computer Wins: {self.comp_wins}",
             font_name=("Arial",),
             font_size=24,
@@ -155,7 +156,7 @@ class Play(arcade.View):
         )
 
         score_box.add(self.p_wins)
-        score_box.add(self.comp_wins)
+        score_box.add(self.c_wins)
 
         # Create buttons for rock, paper, and scissors
         # Buttons have an image each
@@ -215,6 +216,7 @@ class Play(arcade.View):
         def _(event):
             arcade.play_sound(button_sound)
             self.hand_choices["player"] = "rock"
+            self.play_round()
             if self.hand_choices["computer"] in ["rock", "paper", "scissors"]:
                 self.player_response("rock", reveal_choice=True)
             else:
@@ -224,6 +226,7 @@ class Play(arcade.View):
         def _(event):
             arcade.play_sound(button_sound)
             self.hand_choices["player"] = "paper"
+            self.play_round()
             if self.hand_choices["computer"] in ["rock", "paper", "scissors"]:
                 self.player_response("paper", reveal_choice=True)
             else:
@@ -233,6 +236,7 @@ class Play(arcade.View):
         def _(event):
             arcade.play_sound(button_sound)
             self.hand_choices["player"] = "scissors"
+            self.play_round()
             if self.hand_choices["computer"] in ["rock", "paper", "scissors"]:
                 self.player_response("scissors", reveal_choice=True)
             else:
@@ -252,26 +256,8 @@ class Play(arcade.View):
         # Set up GUI
         self.ui.draw()
         arcade.draw_sprite(self.enemy_sprite)
-
-        # Player and Computer win tally
-        # Computer decides based on algorithm
-        self.hand_choices["computer"] = self.computer.play()
-        self.hand_choices["player"] = self.computer.play()
-        player_ready = self.hand_choices["player"] != "none"
-        self.computer_response(self.hand_choices["computer"], player_ready)
-        winner = "none"
-        if self.hand_choices["player"] != "none" and self.hand_choices["computer"] != "none":
-            winner = self.decide_winner(self.hand_choices["player"], self.hand_choices["computer"])
-        print(self.hand_choices)
-        if winner != "none":
-            print(winner)
-            # reset responses
-            for i in self.hand_choices:
-                i = "none"
-
-            # Tally up score board and computer records
-            print("computer records")
-
+        self.p_wins.text = f"{self.p_id} Wins: {self.player_wins}"
+        self.c_wins.text = f"Computer Wins: {self.comp_wins}"
 
     def player_response(self,  choice: str, reveal_choice: bool) -> None:
         message = "..."
@@ -331,6 +317,45 @@ class Play(arcade.View):
             else:
                 return "computer"
         return "tie"
+
+    def play_round(self) -> None:
+        # Player and Computer win tally
+        # Computer decides based on algorithm
+        self.hand_choices["computer"] = self.computer.play()
+        self.hand_choices["player"] = self.computer.play()
+        player_ready = self.hand_choices["player"] != "none"
+        self.computer_response(self.hand_choices["computer"], player_ready)
+        winner = "none"
+        if self.hand_choices["player"] != "none" and self.hand_choices["computer"] != "none":
+            winner = self.decide_winner(self.hand_choices["player"], self.hand_choices["computer"])
+        print(self.hand_choices)
+        if winner != "none":
+            print(winner)
+
+            # Update scoreboard
+            if winner == "player":
+                self.player_wins += 1
+            elif winner == "computer":
+                self.comp_wins += 1
+
+            # Troubleshoot, scoreboard does not update function pw and cw tracker
+            print(f"pw: {self.player_wins}")
+            print(f"cw: {self.comp_wins}")
+
+
+            # Tally up score board and computer records
+            print("computer records")
+            self.computer.total_games += 1
+            if self.hand_choices["player"] == "rock":
+                self.computer.opponent_rock_picks += 1
+            elif self.hand_choices["player"] == "paper":
+                self.computer.opponent_paper_picks += 1
+            else: # "scissors" choice
+                self.computer.opponent_scissors_picks += 1
+
+        # reset responses
+        for key in self.hand_choices:
+            self.hand_choices[key] = "none"
 
 
 
