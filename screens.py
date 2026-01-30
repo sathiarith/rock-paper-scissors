@@ -126,7 +126,9 @@ class Play(arcade.View):
         self.player_wins = 0
         self.comp_wins = 0
         self.hand_choices = {"player": "none", "computer": "none"}
+        self.player_speech_anchor = None
         self.player_speech = None
+        self.enemy_speech_anchor = None
         self.enemy_speech = None
 
         # Anchors layout
@@ -216,31 +218,44 @@ class Play(arcade.View):
         def _(event):
             arcade.play_sound(button_sound)
             self.hand_choices["player"] = "rock"
-            self.play_round()
+            self.play_round("rock")
+            print("comp: " + str(self.hand_choices["computer"]) + " player: " + str(self.hand_choices["player"]))
             if self.hand_choices["computer"] in ["rock", "paper", "scissors"]:
                 self.player_response("rock", reveal_choice=True)
             else:
                 self.player_response("rock", reveal_choice=False)
 
+            # reset responses
+            for key in self.hand_choices:
+                self.hand_choices[key] = "none"
+
         @self.paper_button.event("on_click")
         def _(event):
             arcade.play_sound(button_sound)
             self.hand_choices["player"] = "paper"
-            self.play_round()
+            self.play_round("paper")
             if self.hand_choices["computer"] in ["rock", "paper", "scissors"]:
                 self.player_response("paper", reveal_choice=True)
             else:
                 self.player_response("paper", reveal_choice=False)
 
+            # reset responses
+            for key in self.hand_choices:
+                self.hand_choices[key] = "none"
+
         @self.scissors_button.event("on_click")
         def _(event):
             arcade.play_sound(button_sound)
             self.hand_choices["player"] = "scissors"
-            self.play_round()
+            self.play_round("scissors")
             if self.hand_choices["computer"] in ["rock", "paper", "scissors"]:
                 self.player_response("scissors", reveal_choice=True)
             else:
                 self.player_response("scissors", reveal_choice=False)
+
+            # reset responses
+            for key in self.hand_choices:
+                self.hand_choices[key] = "none"
 
 
 
@@ -264,7 +279,11 @@ class Play(arcade.View):
         if reveal_choice:
             message = choice
 
-        player_speech_anchor = self.ui.add(UIAnchorLayout(x=-245, y=-10))
+        if self.player_speech_anchor:
+            self.ui.remove(self.player_speech_anchor)
+            self.player_speech_anchor = None
+
+        self.player_speech_anchor = self.ui.add(UIAnchorLayout(x=-245, y=-10))
 
         # Create speech/choice bubbles
         self.player_speech = UITextureButton(
@@ -277,15 +296,20 @@ class Play(arcade.View):
             font_size=24,
             bold=True,
         )
+
         self.player_speech.add(player_speech_text)
-        player_speech_anchor.add(self.player_speech)
+        self.player_speech_anchor.add(self.player_speech)
 
     def computer_response(self, choice: str, reveal_choice: bool) -> None:
         message = "..."
         if reveal_choice:
             message = choice
 
-        enemy_speech_anchor = self.ui.add(UIAnchorLayout(x=60, y=190))
+        if self.enemy_speech_anchor:
+            self.ui.remove(self.enemy_speech_anchor)
+            self.enemy_speech_anchor = None
+
+        self.enemy_speech_anchor = self.ui.add(UIAnchorLayout(x=60, y=190))
 
         # Create speech/choice bubbles
         self.enemy_speech = UITextureButton(
@@ -298,8 +322,9 @@ class Play(arcade.View):
             font_size=24,
             bold=True,
         )
+
         self.enemy_speech.add(enemy_speech_text)
-        enemy_speech_anchor.add(self.enemy_speech)
+        self.enemy_speech_anchor.add(self.enemy_speech)
 
     @staticmethod
     def decide_winner(p_choice: str, c_choice: str)-> str:
@@ -318,11 +343,11 @@ class Play(arcade.View):
                 return "computer"
         return "tie"
 
-    def play_round(self) -> None:
+    def play_round(self, p_choice) -> None:
         # Player and Computer win tally
         # Computer decides based on algorithm
         self.hand_choices["computer"] = self.computer.play()
-        self.hand_choices["player"] = self.computer.play()
+        self.hand_choices["player"] = p_choice # error: comp doesnt decide player
         player_ready = self.hand_choices["player"] != "none"
         self.computer_response(self.hand_choices["computer"], player_ready)
         winner = "none"
@@ -353,9 +378,7 @@ class Play(arcade.View):
             else: # "scissors" choice
                 self.computer.opponent_scissors_picks += 1
 
-        # reset responses
-        for key in self.hand_choices:
-            self.hand_choices[key] = "none"
+
 
 
 
