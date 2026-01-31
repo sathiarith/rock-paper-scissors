@@ -1,3 +1,5 @@
+import sys
+
 import arcade
 import arcade.gui
 from computer import Computer
@@ -122,7 +124,6 @@ class Play(arcade.View):
         self.p_id = player_id
         self.ui = arcade.gui.UIManager()
         self.computer = Computer()
-        self.game_mode = 0 # 0 for random, 1 for probabilistic
         self.player_wins = 0
         self.comp_wins = 0
         self.hand_choices = {"player": "none", "computer": "none"}
@@ -214,6 +215,23 @@ class Play(arcade.View):
 
         select_buttons_anchor.add(buttons_layout)
 
+        quit_anchor = self.ui.add(UIAnchorLayout(x=280, y=-270))
+        quit_button = UITextureButton(
+            texture=blue_sq_button_default,
+            texture_pressed=blue_sq_button_default,
+            texture_hovered=blue_sq_button_hover,
+            size_hint=(.2, .067),
+        )
+
+        text = UILabel(
+            text="QUIT",
+            font_name=("Arial",),
+            text_color=arcade.color.BLACK,
+        )
+
+        quit_button.add(text)
+        quit_anchor.add(quit_button)
+
         @self.rock_button.event("on_click")
         def _(event):
             arcade.play_sound(button_sound)
@@ -257,6 +275,10 @@ class Play(arcade.View):
             for key in self.hand_choices:
                 self.hand_choices[key] = "none"
 
+        @quit_button.event("on_click")
+        def _(event):
+            self.window.close()
+
 
 
     def on_show_view(self) -> None:
@@ -273,6 +295,7 @@ class Play(arcade.View):
         arcade.draw_sprite(self.enemy_sprite)
         self.p_wins.text = f"{self.p_id} Wins: {self.player_wins}"
         self.c_wins.text = f"Computer Wins: {self.comp_wins}"
+
 
     def player_response(self,  choice: str, reveal_choice: bool) -> None:
         message = "..."
@@ -382,18 +405,3 @@ class Play(arcade.View):
 
 
 
-class Results(arcade.View):
-    """
-        Short one-sentence summary of what the class represents.
-
-        Longer explanation if necessary. Focus on **purpose**, not code details.
-
-        Attributes:
-            attribute_name (type): Description of what it stores.
-            another_attribute (type): Another description.
-    """
-    def on_show(self):
-        arcade.set_background_color(arcade.color.WHITE)
-
-    def on_draw(self):
-        self.clear()
