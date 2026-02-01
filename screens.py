@@ -2,24 +2,41 @@ import arcade
 import arcade.gui
 from computer import Computer
 from arcade.gui import UIAnchorLayout, UITextureButton, UIBoxLayout, UILabel
+import sys
+from pathlib import Path
+from typing import Union
+
+
+def resource_path(relative_path: Union[str, Path]) -> Path:
+    """
+    Get absolute path to resource, works for development and PyInstaller.
+
+    :param relative_path: Path to the resource, relative to project or EXE.
+    :return: Absolute Path object pointing to the resource.
+    """
+    # If running as PyInstaller onefile, _MEIPASS points to temp folder
+    base_path = Path(getattr(sys, "_MEIPASS", Path(__file__).parent))
+    return base_path / relative_path
+
+
 
 # Preload files
 # Graphics
-blue_rect_button_default = arcade.load_texture("Graphics/Button/Rect-Medium/Default.png")
-blue_rect_button_hover = arcade.load_texture("Graphics/Button/Rect-Medium/Hover.png")
-blue_sq_button_default = arcade.load_texture("Graphics/Button/Square-Medium/Default.png")
-blue_sq_button_hover = arcade.load_texture("Graphics/Button/Square-Medium/Hover.png")
+blue_rect_button_default = arcade.load_texture(resource_path("Graphics/Button/Rect-Medium/Default.png"))
+blue_rect_button_hover = arcade.load_texture(resource_path("Graphics/Button/Rect-Medium/Hover.png"))
+blue_sq_button_default = arcade.load_texture(resource_path("Graphics/Button/Square-Medium/Default.png"))
+blue_sq_button_hover = arcade.load_texture(resource_path("Graphics/Button/Square-Medium/Hover.png"))
 
-title_img = arcade.load_texture("Graphics/Objects/Title.jpg")
-rules_img = arcade.load_texture("Graphics/Objects/rps_rules_modified.png")
-enemy_img = arcade.load_texture("Graphics/Objects/robot_profile.png")
+title_img = arcade.load_texture(resource_path("Graphics/Objects/Title.jpg"))
+rules_img = arcade.load_texture(resource_path("Graphics/Objects/rps_rules_modified.png"))
+enemy_img = arcade.load_texture(resource_path("Graphics/Objects/robot_profile.png"))
 
-comp_speech = arcade.load_texture("Graphics/Objects/orange_speech_right.png")
-player_speech = arcade.load_texture("Graphics/Objects/orange_speech_left.png")
+comp_speech = arcade.load_texture(resource_path("Graphics/Objects/orange_speech_right.png"))
+player_speech = arcade.load_texture(resource_path("Graphics/Objects/orange_speech_left.png"))
 
 # Sound
-button_sound = arcade.load_sound("Sounds/button-bling.wav")
-music = arcade.load_sound("Sounds/tam-xa-mai-start-background.mp3")
+button_sound = arcade.load_sound(resource_path("Sounds/button-bling.wav"))
+music = arcade.load_sound(resource_path("Sounds/tam-xa-mai-start-background.mp3"))
 
 class Start(arcade.View):
     """
@@ -181,7 +198,7 @@ class Play(arcade.View):
         # Buttons have an image each
 
         rock_img = arcade.gui.UIImage(
-            texture = arcade.load_texture("Graphics/Objects/rock.png"),
+            texture = arcade.load_texture(resource_path("Graphics/Objects/rock.png")),
             size_hint=(.4, .7),
         )
         self.rock_button = UITextureButton(
@@ -193,7 +210,7 @@ class Play(arcade.View):
         self.rock_button.add(rock_img)
 
         paper_img = arcade.gui.UIImage(
-            texture = arcade.load_texture("Graphics/Objects/paper.png"),
+            texture = arcade.load_texture(resource_path("Graphics/Objects/paper.png")),
             size_hint=(.4, .7),
         )
         self.paper_button = UITextureButton(
@@ -205,7 +222,7 @@ class Play(arcade.View):
         self.paper_button.add(paper_img)
 
         scissors_img = arcade.gui.UIImage(
-            texture = arcade.load_texture("Graphics/Objects/scissors.png"),
+            texture = arcade.load_texture(resource_path("Graphics/Objects/scissors.png")),
             size_hint=(.4, .7),
         )
         self.scissors_button = UITextureButton(
