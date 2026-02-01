@@ -7,6 +7,12 @@ SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Rock, Paper, Scissors"
 
 class Game(arcade.Window):
+    """
+    Game window class sets up play window and defines its dimensions
+
+    Attributes:
+        start_screen (arcade View class): Initializes the introductory screen
+    """
     def __init__(self):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 

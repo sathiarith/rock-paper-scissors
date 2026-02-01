@@ -1,5 +1,3 @@
-import sys
-
 import arcade
 import arcade.gui
 from computer import Computer
@@ -28,8 +26,12 @@ class Start(arcade.View):
         Title and start menu to store player name and begin gameplay.
 
         Attributes:
-            attribute_name (type): Description of what it stores.
-            another_attribute (type): Another description.
+            ui (arcade class): Maintains graphics' objects and locations
+            player_id (str): Player typed name
+            title_sprite (arcade.Sprite): Title graphic
+            rules_sprite (arcade.Sprite): Rules graphic
+            enemy_sprite (arcade.Sprite): Enemy graphic
+
     """
 
     def __init__(self):
@@ -83,11 +85,11 @@ class Start(arcade.View):
         start_game_anchor.add(start_button)
 
         @p_input.event("on_change")
-        def _(event):
+        def _(_):
             self.player_id = p_input.text
 
         @start_button.event("on_click")
-        def _(event):
+        def _(_):
             arcade.play_sound(button_sound)
             self.window.show_view(Play(self.player_id))
             play_music.pause()
@@ -116,8 +118,22 @@ class Play(arcade.View):
         A scoreboard tracks play history.
 
         Attributes:
-            attribute_name (type): Description of what it stores.
-            another_attribute (type): Another description.
+            p_id (string): User's typed name.
+            ui (arcade class): Maintains graphics' objects and locations
+            computer (class): Basic gameplay AI
+            player_wins (int): Number of wins
+            comp_wins (int): Number of wins
+            hand_choices (dict): Dictionary of hand sign and play choices
+            player_speech_anchor (arcade class): Origin coordinate for player speech bubble
+            player_speech (arcade class): Graphics for player speech bubble
+            enemy_speech_anchor (arcade class): Origin coordinate for computer speech bubble
+            enemy_speech (arcade class): Graphics for computer speech bubble
+            enemy_sprite (arcade class): Graphics for computer character
+            p_wins (int): Number of player wins used as button text
+            c_wins (int): Number of computer wins used as button text
+            rock_button (arcade class): button sprite with rock sprite
+            paper_button (arcade class): button sprite with paper sprite
+            scissors_button (arcade class): button sprite with scissors sprite
     """
     def __init__(self, player_id: str) -> None:
         super().__init__()
@@ -233,11 +249,10 @@ class Play(arcade.View):
         quit_anchor.add(quit_button)
 
         @self.rock_button.event("on_click")
-        def _(event):
+        def _(_):
             arcade.play_sound(button_sound)
             self.hand_choices["player"] = "rock"
             self.play_round("rock")
-            print("comp: " + str(self.hand_choices["computer"]) + " player: " + str(self.hand_choices["player"]))
             if self.hand_choices["computer"] in ["rock", "paper", "scissors"]:
                 self.player_response("rock", reveal_choice=True)
             else:
@@ -248,7 +263,7 @@ class Play(arcade.View):
                 self.hand_choices[key] = "none"
 
         @self.paper_button.event("on_click")
-        def _(event):
+        def _(_):
             arcade.play_sound(button_sound)
             self.hand_choices["player"] = "paper"
             self.play_round("paper")
@@ -262,7 +277,7 @@ class Play(arcade.View):
                 self.hand_choices[key] = "none"
 
         @self.scissors_button.event("on_click")
-        def _(event):
+        def _(_):
             arcade.play_sound(button_sound)
             self.hand_choices["player"] = "scissors"
             self.play_round("scissors")
@@ -276,7 +291,7 @@ class Play(arcade.View):
                 self.hand_choices[key] = "none"
 
         @quit_button.event("on_click")
-        def _(event):
+        def _(_):
             self.window.close()
 
 
@@ -376,9 +391,8 @@ class Play(arcade.View):
         winner = "none"
         if self.hand_choices["player"] != "none" and self.hand_choices["computer"] != "none":
             winner = self.decide_winner(self.hand_choices["player"], self.hand_choices["computer"])
-        print(self.hand_choices)
+
         if winner != "none":
-            print(winner)
 
             # Update scoreboard
             if winner == "player":
@@ -386,13 +400,8 @@ class Play(arcade.View):
             elif winner == "computer":
                 self.comp_wins += 1
 
-            # Troubleshoot, scoreboard does not update function pw and cw tracker
-            print(f"pw: {self.player_wins}")
-            print(f"cw: {self.comp_wins}")
-
 
             # Tally up score board and computer records
-            print("computer records")
             self.computer.total_games += 1
             if self.hand_choices["player"] == "rock":
                 self.computer.opponent_rock_picks += 1
@@ -400,8 +409,3 @@ class Play(arcade.View):
                 self.computer.opponent_paper_picks += 1
             else: # "scissors" choice
                 self.computer.opponent_scissors_picks += 1
-
-
-
-
-
