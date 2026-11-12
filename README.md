@@ -2,7 +2,7 @@
 
 A desktop Rock, Paper, Scissors game built with Python and the [Arcade](https://api.arcade.academy/) library. You play against a computer opponent that adapts to you: it tracks which hands you throw and gradually shifts its own picks to counter your habits.
 
-![Rock, Paper, Scissors gameplay](Graphics/Sample/RPS_start_screen.png)
+![Rock, Paper, Scissors start screen](Graphics/Sample/RPS_start_screen.png)
 ![Rock, Paper, Scissors gameplay](Graphics/Sample/RPS_play_screen.png)
 ## Table of Contents
 
@@ -141,4 +141,3 @@ The executable is written to `dist/`. The `Graphics` and `Sounds` folders must b
 
 - [Arcade](https://api.arcade.academy/) for the game window, GUI widgets, sprites, and sound.
 - [PyInstaller](https://pyinstaller.org/) for packaging the Windows executable.
-- Graphics and sounds: *add the source and license for each asset here (for example, the background music track, button textures, and hand images).*
